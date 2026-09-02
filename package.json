@@ -1,0 +1,14 @@
+{
+  "name": "minit-template-vanilla",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Plain HTML5 + JavaScript starter template for Minit Games \u2014 no build step, smallest possible bundle",
+  "scripts": {
+    "dev": "node tools/serve.mjs . 5173",
+    "package": "bash tools/package.sh",
+    "verify:audio": "node tools/verify-audio.mjs",
+    "gen:music": "node tools/gen-music.mjs",
+    "vendor:sdk": "node tools/vendor-sdk.mjs"
+  }
+}

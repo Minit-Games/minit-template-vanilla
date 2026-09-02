@@ -1,0 +1,6 @@
+node_modules/
+dist/
+# The CC0 source pack tools/gen-music.mjs downloads (~47 MB), and the scratch
+# npm install tools/vendor-sdk.mjs uses. Both are regenerated on demand.
+.cache/
+.DS_Store
