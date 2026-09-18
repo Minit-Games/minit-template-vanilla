@@ -6,7 +6,7 @@
   "description": "Plain HTML5 + JavaScript starter template for Minit Games \u2014 no build step, smallest possible bundle",
   "scripts": {
     "dev": "node tools/serve.mjs . 5173",
-    "package": "bash tools/package.sh",
+    "package": "node tools/package.mjs",
     "verify:audio": "node tools/verify-audio.mjs",
     "gen:music": "node tools/gen-music.mjs",
     "vendor:sdk": "node tools/vendor-sdk.mjs"
