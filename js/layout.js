@@ -65,6 +65,16 @@ export function createLayout(canvas, wrapper) {
 		const vw = window.innerWidth, vh = window.innerHeight;
 		if (vw < 1 || vh < 1) { return; }
 
+		// The backing store is sized once at load from devicePixelRatio, but
+		// a DPR change later (e.g. the window moving to a different-density
+		// display) leaves it stale unless every re-run also re-checks it.
+		const dpr = Math.min(window.devicePixelRatio || 1, 2);
+		if (dpr !== layout.dpr) {
+			layout.dpr = dpr;
+			canvas.width = Math.round(SURFACE_WIDTH * dpr);
+			canvas.height = Math.round(SURFACE_HEIGHT * dpr);
+		}
+
 		const cover = Math.max(vw / SURFACE_WIDTH, vh / SURFACE_HEIGHT);
 		const cropX = (SURFACE_WIDTH * cover - vw) / (SURFACE_WIDTH * cover);
 		const cropY = (SURFACE_HEIGHT * cover - vh) / (SURFACE_HEIGHT * cover);
