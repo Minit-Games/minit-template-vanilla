@@ -44,7 +44,8 @@ const MUSIC_ON = getConfigValue('music', 'true') === 'true';
 const ROUND_SECONDS = 30;
 
 const canvas = document.getElementById('game');
-const layout = createLayout(canvas);
+const wrapper = document.getElementById('wrapper');
+const layout = createLayout(canvas, wrapper);
 const audio = createAudio({ sound: SOUND_ON, music: MUSIC_ON });
 
 let score = 0;
@@ -88,8 +89,15 @@ canvas.addEventListener('pointerdown', (e) => {
 	// context resumed outside a gesture stays suspended, and everything played
 	// into it is discarded rather than queued.
 	audio.unlock();
+	// The wrapper (and therefore the canvas, which fills it) is CSS-scaled
+	// visually via transform: scale(...), so getBoundingClientRect() returns
+	// post-scale screen pixels while tryHit expects fixed-surface (960x1480)
+	// coordinates. The rect's own scale ratio converts one to the other
+	// without needing to read the current scale factor separately.
 	const rect = canvas.getBoundingClientRect();
-	game.tryHit(e.clientX - rect.left, e.clientY - rect.top);
+	const x = (e.clientX - rect.left) * (layout.get().width / rect.width);
+	const y = (e.clientY - rect.top) * (layout.get().height / rect.height);
+	game.tryHit(x, y);
 }, { passive: true });
 
 /* ---- ending the run --------------------------------------------------- */
@@ -122,8 +130,6 @@ function frame(now) {
 	// The clock gets a looser one. Sharing the physics clamp donates every slow
 	// frame back to the player, and a 30 s round measurably overruns.
 	const tick = Math.min(raw, 0.5);
-
-	if (layout.measure()) { game.resize(); }
 
 	if (ready && !finished) {
 		remaining -= tick;
