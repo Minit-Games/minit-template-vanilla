@@ -74,7 +74,7 @@ node tools/package.mjs
 index.html                  the page, and the Minit audio repair (read the comment)
 js/main.js                  SDK lifecycle, scoring, the round clock
 js/game.js                  the world: physics, rendering, and the HUD
-js/layout.js                viewport-driven layout; there is no design resolution
+js/layout.js                fixed 960x1480 design surface; the SDK's recommended scale-to-fit recipe
 js/audio.js                 one AudioContext: the music loop and synthesised effects
 js/music.js                 generated — the loop, as inlined mu-law bytes
 vendor/minit-sdk/           the SDK modules used, copied verbatim from npm
@@ -223,9 +223,24 @@ Most are enforced by `tools/check-meta.mjs`, which runs during packaging.
   path resolves to nothing.
 - **Touch only.** Pointer events throughout, tap targets past 44 px, no hover
   and no keyboard.
-- **Portrait, any aspect ratio.** The app's slot is nearer 2:3 than the 9:18 a
-  phone screen suggests, and differs again on the web player — so nothing is
-  hardcoded and `js/layout.js` measures the viewport every frame.
+- **Portrait, one fixed 960×1480 design surface, scaled to fit.** The app's
+  slot is nearer 2:3 than the 9:18 a phone screen suggests, and differs again
+  on the web player, so `js/layout.js` authors everything against a single
+  fixed surface and scales the whole thing uniformly with one CSS
+  `transform: scale(...)` on `#wrapper`, rather than deriving gameplay
+  coordinates from the viewport. Crop is capped at 5% per axis before it
+  falls back from cover to letterboxed fit, must-see content stays inside the
+  central 90% of the surface, and tap targets stay ≥44 CSS px after the
+  scale-down. The scaler re-runs on resize, orientation change, the visual
+  viewport, and a `ResizeObserver` — not on every frame. This is the Minit
+  Games **recommended** layout convention, not an unconditional platform
+  requirement; the canonical source is the `@minit-games/sdk` package
+  README's own "Screen, viewport, and scaling" section. It is **not**
+  vendored into this repo — `tools/vendor-sdk.mjs` (see "Why the SDK is
+  vendored" above) only copies the `dist/` JS modules this game imports, and
+  writes its own short note as `vendor/minit-sdk/README.md` rather than
+  copying the package's real README — so read it on GitHub:
+  [Minit-Games/minit-sdk § "Screen, viewport, and scaling"](https://github.com/Minit-Games/minit-sdk#screen-viewport-and-scaling).
 
 ## Regenerating the music
 
