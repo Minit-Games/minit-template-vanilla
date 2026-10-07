@@ -1,4 +1,16 @@
 import { callApiFunction, isTestEnvironment } from "../utils.js";
+// Hand-copied from packages/shared/src/creatorLimits.ts in the minit-root monorepo;
+// minit-sdk cannot import across repositories.
+const FLAVOR_TEXT_MAX_LENGTH = 64;
+const USER_DATA_MAX_BYTES = 1024;
+/**
+ * Reports the run's outcome to the host and triggers its result screen. Call once, when the run ends.
+ *
+ * @param result A number for score/time games, or a result-group string (e.g. `'WIN'`).
+ *   **For time-based games (`resultSorting: "fastestTime" | "slowestTime"`) the number is
+ *   SECONDS, not milliseconds** — fractions are allowed (`42.5`). Pass `elapsedMs / 1000`.
+ * @param options Optional `flavorText`, `userData`, `delay` (ms).
+ */
 export function reportResult(result, options) {
     if (isTestEnvironment()) {
         if (options?.delay) {
@@ -35,6 +47,15 @@ function buildHostOptions(options) {
     if (!options)
         return undefined;
     const { userData, ...rest } = options;
+    if (typeof options.flavorText === "string" && options.flavorText.length > FLAVOR_TEXT_MAX_LENGTH) {
+        console.warn(`[MinitSDK] flavorText is ${options.flavorText.length} characters; the ${FLAVOR_TEXT_MAX_LENGTH}-character cap is exceeded, so the platform will truncate it.`);
+    }
+    if (typeof userData === "string" && typeof TextEncoder !== "undefined") {
+        const userDataBytes = new TextEncoder().encode(userData).length;
+        if (userDataBytes > USER_DATA_MAX_BYTES) {
+            console.warn(`[MinitSDK] userData is ${userDataBytes} UTF-8 bytes; the ${USER_DATA_MAX_BYTES}-byte cap is exceeded, so the platform will discard it.`);
+        }
+    }
     if (typeof userData !== "string") {
         return Object.keys(rest).length > 0 ? rest : undefined;
     }

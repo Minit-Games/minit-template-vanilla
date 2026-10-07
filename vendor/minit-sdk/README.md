@@ -1,4 +1,4 @@
-# Vendored from @minit-games/sdk@1.11.0
+# Vendored from @minit-games/sdk@1.15.0
 
 These files are copied VERBATIM by `tools/vendor-sdk.mjs`. Do not edit them
 here -- re-run that script to update, and change the file list there if the
