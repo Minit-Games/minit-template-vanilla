@@ -81,8 +81,8 @@ const game = createGame(canvas, layout, {
 
 /* ---- input -----------------------------------------------------------
    Pointer events cover touch and mouse from one path, so the game is testable
-   on a desktop and correct on the phone it ships to. No hover, no keyboard --
-   neither exists on the device this runs on. */
+   on a desktop and correct on the phone it ships to. No hover -- it never fires
+   on touch screens. Keyboard is fine as an extra input, never the only one. */
 canvas.addEventListener('pointerdown', (e) => {
 	if (finished) { return; }
 	// The gesture that starts the game is also the one that unlocks audio: a
