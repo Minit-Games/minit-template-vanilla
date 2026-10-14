@@ -221,8 +221,10 @@ Most are enforced by `tools/check-meta.mjs`, which runs during packaging.
 - **Relative paths everywhere.** The app does not serve the game from a domain
   root — on iOS it is behind the `minitlocal://` custom scheme — so an absolute
   path resolves to nothing.
-- **Touch only.** Pointer events throughout, tap targets past 44 px, no hover
-  and no keyboard.
+- **Touch first.** Every action works by touch: pointer events throughout, tap
+  targets past 44 px. Keyboard is fine as an extra input (for example for
+  desktop play), never the only way to do something. No hover — it never fires
+  on touch screens.
 - **Portrait, one fixed 960×1480 design surface, scaled to fit.** The app's
   slot is nearer 2:3 than the 9:18 a phone screen suggests, and differs again
   on the web player, so `js/layout.js` authors everything against a single
