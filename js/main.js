@@ -39,6 +39,27 @@ const POINTS_PER_TAP = Math.max(1, Number(getConfigValue('pointsPerTap', '10')) 
 const SOUND_ON = getConfigValue('sound', 'true') === 'true';
 const MUSIC_ON = getConfigValue('music', 'true') === 'true';
 
+/* The optional module arrives with SDK 1.19.0; browser preferences keep older
+   vendored copies and standalone previews comfortable in the meantime. */
+const browserReducedMotion = typeof matchMedia === 'function'
+	&& matchMedia('(prefers-reduced-motion: reduce)').matches;
+let deviceCapabilities = {};
+try { deviceCapabilities = await import('../vendor/minit-sdk/modules/deviceCapabilities.js'); }
+catch { /* Use the local fallback while the optional module is unavailable. */ }
+
+const reducedMotion = typeof deviceCapabilities.prefersReducedMotion === 'function'
+	? deviceCapabilities.prefersReducedMotion()
+	: browserReducedMotion;
+const motionQuality = typeof deviceCapabilities.getMotionQuality === 'function'
+	? deviceCapabilities.getMotionQuality()
+	: (browserReducedMotion ? 'reduced' : 'full');
+const deviceTier = typeof deviceCapabilities.getDeviceTier === 'function'
+	? deviceCapabilities.getDeviceTier()
+	: 'unknown';
+const particleScale = reducedMotion ? 0
+	: motionQuality === 'reduced' ? 0.25
+		: ({ high: 1, medium: 0.75, low: 0.5, unknown: 0.75 }[deviceTier] ?? 0.75);
+
 /* How long a run lasts. The host owns everything either side of the run, so
    the game ends itself on a clock rather than offering a button to press. */
 const ROUND_SECONDS = 30;
@@ -56,6 +77,7 @@ let finished = false;
 let remaining = ROUND_SECONDS;
 
 const game = createGame(canvas, layout, {
+	particleScale,
 	onTap() {
 		rally++;
 		if (rally > bestRally) { bestRally = rally; }

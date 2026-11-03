@@ -32,6 +32,7 @@ const FILES = [
 	'modules/loadingDone.js',
 	'modules/userData.js',
 	'modules/audioVisibility.js',
+	'modules/deviceCapabilities.js',
 ];
 
 // Pull the package into a scratch dir rather than requiring a node_modules

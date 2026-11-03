@@ -13,7 +13,7 @@ const AIR_DRAG = 0.4;
 const TAP_IMPULSE = 1150;
 const REST_SPEED = 40;         // below this at the surface, the ball settles
 
-export function createGame(canvas, layout, { onTap, onBounce }) {
+export function createGame(canvas, layout, { onTap, onBounce, particleScale = 1 }) {
 	const ctx = canvas.getContext('2d', { alpha: false });
 	const L = () => layout.get();
 
@@ -122,7 +122,8 @@ export function createGame(canvas, layout, { onTap, onBounce }) {
 
 	function burst(x, y, n, color) {
 		const l = L();
-		for (let i = 0; i < n; i++) {
+		const count = Math.round(n * particleScale);
+		for (let i = 0; i < count; i++) {
 			const a = Math.random() * Math.PI * 2;
 			const speed = (60 + Math.random() * 200) * (l.unit / 3.9);
 			particles.push({

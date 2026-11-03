@@ -128,6 +128,18 @@ template exists to be the smallest one, so the score, the clock and the feedback
 banners are a few `fillText` calls in `js/game.js` instead. If you want the
 platform-standard HUD, import that module and delete `drawHud`.
 
+## Device-adaptive effects
+
+The example in `js/main.js` scales the game's particle bursts for the device's
+motion quality and tier, and disables them when reduced motion is preferred.
+Try it on the locally served game with
+`http://localhost:5173/?motionQuality=reduced`, `?deviceTier=low`, or
+`?reducedMotion=1`. Until `vendor/minit-sdk/` includes
+`modules/deviceCapabilities.js` from SDK 1.19.0 or newer via
+`npm run vendor:sdk`, it falls back to the browser's reduced-motion preference.
+See [Device-Adaptive Effects](https://minit.studio/docs/device-adaptive-effects)
+for the getter semantics and adaptation guidance.
+
 ## The three calls that matter
 
 A Minit drop is one session: load → play → result. There is no title screen, no
