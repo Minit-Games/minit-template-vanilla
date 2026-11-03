@@ -34,6 +34,9 @@ const FILES = [
 	'modules/audioVisibility.js',
 	'modules/deviceCapabilities.js',
 ];
+const OPTIONAL_FILES = new Set([
+	'modules/deviceCapabilities.js',
+]);
 
 // Pull the package into a scratch dir rather than requiring a node_modules
 // here -- this template has no runtime dependencies to install.
@@ -47,11 +50,21 @@ execFileSync('npm', ['install', '--silent', '--no-audit', '--no-fund', '@minit-g
 const DIST = join(TMP, 'node_modules/@minit-games/sdk/dist');
 const version = JSON.parse(await readFile(join(TMP, 'node_modules/@minit-games/sdk/package.json'), 'utf8')).version;
 
+const availableFiles = [];
+for (const f of FILES) {
+	if (existsSync(join(DIST, f))) {
+		availableFiles.push(f);
+	} else if (OPTIONAL_FILES.has(f)) {
+		console.log(`  skipping optional file missing from package: ${f}`);
+	} else {
+		throw new Error(`missing from the package: ${f}`);
+	}
+}
+
 await rm(OUT, { recursive: true, force: true });
 let total = 0;
-for (const f of FILES) {
+for (const f of availableFiles) {
 	const src = join(DIST, f);
-	if (!existsSync(src)) { throw new Error(`missing from the package: ${f}`); }
 	const dst = join(OUT, f);
 	await mkdir(dirname(dst), { recursive: true });
 	await copyFile(src, dst);
@@ -70,5 +83,5 @@ await writeFile(join(OUT, 'README.md'),
 	'bundler or an import map. Nothing here uses seeded random, so the modules are\n' +
 	'imported directly instead.\n');
 
-console.log(`  vendored ${FILES.length} files (${(total / 1024).toFixed(1)} KB) from @minit-games/sdk@${version}`);
+console.log(`  vendored ${availableFiles.length} files (${(total / 1024).toFixed(1)} KB) from @minit-games/sdk@${version}`);
 await rm(TMP, { recursive: true, force: true });

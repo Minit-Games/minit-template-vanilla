@@ -39,13 +39,13 @@ const POINTS_PER_TAP = Math.max(1, Number(getConfigValue('pointsPerTap', '10')) 
 const SOUND_ON = getConfigValue('sound', 'true') === 'true';
 const MUSIC_ON = getConfigValue('music', 'true') === 'true';
 
-/* The optional module arrives with SDK 1.19.0; browser preferences keep older
-   vendored copies and standalone previews comfortable in the meantime. */
+/* The optional module may be absent from older vendored copies and standalone
+   previews, so browser preferences provide a comfortable fallback. */
 const browserReducedMotion = typeof matchMedia === 'function'
 	&& matchMedia('(prefers-reduced-motion: reduce)').matches;
 let deviceCapabilities = {};
 try { deviceCapabilities = await import('../vendor/minit-sdk/modules/deviceCapabilities.js'); }
-catch { /* Use the local fallback while the optional module is unavailable. */ }
+catch {}
 
 const reducedMotion = typeof deviceCapabilities.prefersReducedMotion === 'function'
 	? deviceCapabilities.prefersReducedMotion()
