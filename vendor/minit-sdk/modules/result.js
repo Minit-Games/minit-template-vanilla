@@ -12,6 +12,10 @@ const USER_DATA_MAX_BYTES = 1024;
  * @param options Optional `flavorText`, `userData`, `delay` (ms).
  */
 export function reportResult(result, options) {
+    if (typeof result !== "number" && typeof result !== "string") {
+        console.warn(`[MinitSDK] reportResult(result) expects a number or a string, got ${typeof result}; the result was ignored and no result screen is shown.`);
+        return;
+    }
     if (isTestEnvironment()) {
         if (options?.delay) {
             console.log(`[MinitSDK] Delaying drop result display by ${options.delay}ms`);
