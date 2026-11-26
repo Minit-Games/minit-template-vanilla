@@ -21,7 +21,7 @@ There is nothing to `npm install`: the template has no runtime dependencies,
 and the scripts under `tools/` use only Node built-ins.
 
 Upload `dist/minit-template-vanilla.zip` at
-[console.minit.games](https://console.minit.games).
+[minit.studio](https://minit.studio).
 
 **Size.** ~177 KB zipped, and the music loop is most of it (241 KB uncompressed). The game code
 is about 27 KB and the vendored SDK 13 KB.
